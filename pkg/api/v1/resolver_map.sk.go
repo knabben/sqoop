@@ -3,6 +3,7 @@
 package v1
 
 import (
+	"log"
 	"sort"
 
 	"github.com/solo-io/go-utils/hashutils"
@@ -134,7 +135,14 @@ func (o *ResolverMap) DeepCopyObject() runtime.Object {
 	return resources.Clone(o).(*ResolverMap)
 }
 
-var ResolverMapCrd = crd.NewCrd(
+var (
+	ResolverMapGVK = schema.GroupVersionKind{
+		Version: "v1",
+		Group:   "sqoop.solo.io",
+		Kind:    "ResolverMap",
+	}
+
+	ResolverMapCrd = crd.NewCrd(
 	"resolvermaps",
 	"sqoop.solo.io",
 	"v1",
@@ -142,3 +150,10 @@ var ResolverMapCrd = crd.NewCrd(
 	"rm",
 	false,
 	&ResolverMap{})
+)
+
+func init() {
+	if err := crd.AddCrd(ResolverMapCrd); err != nil {
+		log.Fatalf("could not add crd to global registry")
+	}
+}

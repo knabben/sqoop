@@ -3,6 +3,7 @@
 package v1
 
 import (
+	"log"
 	"sort"
 
 	"github.com/solo-io/go-utils/hashutils"
@@ -134,7 +135,14 @@ func (o *Schema) DeepCopyObject() runtime.Object {
 	return resources.Clone(o).(*Schema)
 }
 
-var SchemaCrd = crd.NewCrd(
+var (
+	SchemaGVK = schema.GroupVersionKind{
+		Version: "v1",
+		Group:   "sqoop.solo.io",
+		Kind:    "Schema",
+	}
+
+	SchemaCrd = crd.NewCrd(
 	"schemas",
 	"sqoop.solo.io",
 	"v1",
@@ -142,3 +150,11 @@ var SchemaCrd = crd.NewCrd(
 	"sc",
 	false,
 	&Schema{})
+)
+
+
+func init() {
+	if err := crd.AddCrd(SchemaCrd); err != nil {
+		log.Fatalf("could not add crd to global registry")
+	}
+}
